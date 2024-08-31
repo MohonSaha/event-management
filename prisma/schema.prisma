@@ -1,0 +1,51 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Event {
+  id           Int    @id @default(autoincrement())
+  eventName    String
+  eventDate    DateTime
+  startTime    String
+  endTime      String
+  location     String
+  description  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  participants ParticipantOnEvent[]
+
+  @@map("events")
+}
+
+model Participant {
+  id        Int    @id @default(autoincrement())
+  email     String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events    ParticipantOnEvent[]
+
+  @@map("participants")
+}
+
+model ParticipantOnEvent {
+  eventId       Int
+  participantId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event         Event       @relation(fields: [eventId], references: [id])
+  participant   Participant @relation(fields: [participantId], references: [id])
+
+  @@map("participantOnEvent")
+  @@id([eventId, participantId]) // Composite primary key
+}
