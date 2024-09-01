@@ -55,9 +55,9 @@ const getSpecificEventFromDB = async (id: string) => {
 };
 
 const addParticipantOnEvent = async (payload: any, eventID: number) => {
-  const { participantID } = payload;
+  const { participantID: participantIDs } = payload;
 
-  // check if the given eventId is valid or not
+  // Check if the given eventId is valid or not
   const event = await prisma.event.findUnique({
     where: {
       eventID,
@@ -67,32 +67,39 @@ const addParticipantOnEvent = async (payload: any, eventID: number) => {
   if (!event) {
     throw new ApiError(
       httpStatus.NOT_FOUND,
-      `Event ID ${eventID} not found! Try again with valid event ID.`
+      `Event ID ${eventID} not found! Try again with a valid event ID.`
     );
   }
 
-  // check if the given participantId is valid or not
-  const participant = await prisma.participant.findUnique({
-    where: {
-      participantID,
-    },
-  });
+  // Validate each participant ID
+  for (let id of participantIDs) {
+    const participant = await prisma.participant.findUnique({
+      where: {
+        participantID: parseInt(id),
+      },
+    });
 
-  if (!participant) {
-    throw new ApiError(
-      httpStatus.NOT_FOUND,
-      `Participant ID ${participantID} not found! Try again with valid participant ID.`
-    );
+    if (!participant) {
+      throw new ApiError(
+        httpStatus.NOT_FOUND,
+        `Participant ID ${id} not found! Try again with a valid participant ID.`
+      );
+    }
   }
 
-  // added participant with the event
-  const addedParticipant = await prisma.participantOnEvent.create({
-    data: {
-      participantID,
-      eventID,
-    },
-  });
-  return addedParticipant;
+  // Add all participants to the event
+  const addedParticipants = await prisma.$transaction(
+    participantIDs.map((id: string) =>
+      prisma.participantOnEvent.create({
+        data: {
+          participantID: parseInt(id),
+          eventID,
+        },
+      })
+    )
+  );
+
+  return addedParticipants;
 };
 
 const removeParticipantFromEvent = async (
