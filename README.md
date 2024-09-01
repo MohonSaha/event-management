@@ -1,4 +1,4 @@
-<!-- # Blood Donation Service
+# Blood Donation Service
 
 Welcome to the Blood Donation Service! This application facilitates blood donation by connecting donors with those in need. Users can register, log in, search for donors, request blood donations, update donation statuses, and manage their profiles.
 
@@ -25,44 +25,77 @@ You can access the live version of the application [here](https://blood-donation
 - **Authentication:** JWT (JSON Web Tokens)
 - **Other Dependencies:** bcrypt, cookie-parser, cors, dotenv, http-status, jsonwebtoken, zod
 
-## Setup Instructions
+# Setup Instructions
 
-1. Clone the repository.
-2. Install dependencies using `npm install`.
-3. Set up environment variables (e.g., database connection details, JWT secret) in a `.env` file.
-4. Run the development server using `npm run dev`.
-5. Access the application locally at `http://localhost:PORT`, where `PORT` is the specified port in your environment variables.
+## Prerequisites
 
-# Blood Donation API Documentation
+Before you begin, ensure you have the following installed:
 
-## 1. User Registration
+- [Node.js](https://nodejs.org/en/download/) (version 16 or later)
+- [npm](https://www.npmjs.com/get-npm) or [yarn](https://yarnpkg.com/)
+- [PostgreSQL](https://www.postgresql.org/download/) or another supported database for Prisma
 
-**Endpoint:** `POST /api/register`
+## Installation
 
-## 2. User Login
+1. Clone the repository:
 
-**Endpoint:** `POST /api/login`
+   ```bash
+   git clone https://github.com/yourusername/assignment-8-test.git
+   cd assignment-8-test
+   ```
 
-## 3. Get Paginated and Filtered Users (Donors)
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-**Endpoint:** `GET /api/donor-list`
+## Environment Setup
 
-## 4. Request A Donor (user) For Blood
+Create a `.env` file in the root of the project to configure environment variables.
 
-**Endpoint:** `POST /api/donation-request`
+### Example `.env` File
 
-## 5. Get My Donation Request as Donor (user)
+```bash
+DATABASE_URL="postgresql://username:password@localhost:5432/mydatabase?schema=public"
+JWT_SECRET="your_secret_key"
+PORT=3000
 
-**Endpoint:** `GET /api/donation-request`
+```
 
-## 6. Update Request Application Status
+## Event Management API Documentation
+
+### 1. Create a new even
+
+**Endpoint:** `POST /events`
+
+### 2. List all events
+
+**Endpoint:** `GET /events`
+
+### 3. Get details of a specific event by ID
+
+**Endpoint:** `GET /events/:id`
+
+### 4. Update an event by ID
+
+**Endpoint:** `PUT /events/:id`
+
+### 5. Delete an event by ID
+
+**Endpoint:** `DELETE /events/:id`
+
+### 6. Update Request Application Status
 
 **Endpoint:** `PUT /api/donation-request/:requestId`
 
-## 7. Get My Profile
+### 7. Register participants
 
-**Endpoint:** `GET /api/my-profile`
+**Endpoint:** `POST /participant`
 
-## 8. Update My Profile
+### 8. Add participants to an event
 
-**Endpoint:** `PUT /api/my-profile` -->
+**Endpoint:** `POST /events/:id/participants`
+
+### 8. Remove a participant from an even
+
+**Endpoint:** `DELETE /events/:id/participants/:participantId`
