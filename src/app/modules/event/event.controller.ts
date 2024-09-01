@@ -31,7 +31,53 @@ const getAllEvents = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getSpecificEventByID = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await EventServices.getSpecificEventFromDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Single event details retrieved successfully!",
+    data: result,
+  });
+});
+
+const addParticipant = catchAsync(async (req: Request, res: Response) => {
+  // console.log(req.body);
+  const eventID = parseInt(req.params.id);
+
+  const result = await EventServices.addParticipantOnEvent(req.body, eventID);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Participant added successfully!",
+    data: result,
+  });
+});
+
+const removeParticipant = catchAsync(async (req: Request, res: Response) => {
+  // console.log(req.body);
+  const eventID = parseInt(req.params.id);
+  const participantID = parseInt(req.params.participantId);
+
+  const result = await EventServices.removeParticipantFromEvent(
+    eventID,
+    participantID
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Participant removed successfully from the event!",
+    data: result,
+  });
+});
+
 export const EventControllers = {
   addEvent,
   getAllEvents,
+  getSpecificEventByID,
+  addParticipant,
+  removeParticipant,
 };

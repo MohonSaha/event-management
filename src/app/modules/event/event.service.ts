@@ -1,12 +1,13 @@
 import prisma from "../../../shared/prisma";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../interfaces/pagination";
+import ApiError from "../../errors/ApiError";
+import httpStatus from "http-status";
 
 const addeventIntoDB = async (payload: any) => {
   const createdPostData = await prisma.event.create({
     data: payload,
   });
-
   return createdPostData;
 };
 
@@ -27,7 +28,7 @@ const getAllEventsFromDB = async (options: IPaginationOptions) => {
   });
 
   const paginatedEvents = events.slice(skip, skip + limit);
-  const total = events.length; // Total events before pagination
+  const total = events.length;
 
   return {
     success: true,
@@ -42,7 +43,104 @@ const getAllEventsFromDB = async (options: IPaginationOptions) => {
   };
 };
 
+const getSpecificEventFromDB = async (id: string) => {
+  const eventID = parseInt(id);
+  const result = await prisma.event.findUniqueOrThrow({
+    where: {
+      eventID,
+    },
+    include: {},
+  });
+  return result;
+};
+
+const addParticipantOnEvent = async (payload: any, eventID: number) => {
+  const { participantID } = payload;
+
+  // check if the given eventId is valid or not
+  const event = await prisma.event.findUnique({
+    where: {
+      eventID,
+    },
+  });
+
+  if (!event) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      `Event ID ${eventID} not found! Try again with valid event ID.`
+    );
+  }
+
+  // check if the given participantId is valid or not
+  const participant = await prisma.participant.findUnique({
+    where: {
+      participantID,
+    },
+  });
+
+  if (!participant) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      `Participant ID ${participantID} not found! Try again with valid participant ID.`
+    );
+  }
+
+  // added participant with the event
+  const addedParticipant = await prisma.participantOnEvent.create({
+    data: {
+      participantID,
+      eventID,
+    },
+  });
+  return addedParticipant;
+};
+
+const removeParticipantFromEvent = async (
+  eventID: number,
+  participantID: number
+) => {
+  // check if the given eventId is valid or not
+  const event = await prisma.event.findUnique({
+    where: {
+      eventID,
+    },
+  });
+
+  if (!event) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      `Event ID ${eventID} not found! Try again with valid event ID.`
+    );
+  }
+
+  // check if the given participantId is valid or not
+  const participant = await prisma.participant.findUnique({
+    where: {
+      participantID,
+    },
+  });
+
+  if (!participant) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      `Participant ID ${participantID} not found! Try again with valid participant ID.`
+    );
+  }
+
+  const removeParticipant = await prisma.participantOnEvent.deleteMany({
+    where: {
+      participantID,
+      eventID,
+    },
+  });
+
+  return removeParticipant;
+};
+
 export const EventServices = {
   addeventIntoDB,
   getAllEventsFromDB,
+  getSpecificEventFromDB,
+  addParticipantOnEvent,
+  removeParticipantFromEvent,
 };

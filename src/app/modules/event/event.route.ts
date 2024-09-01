@@ -7,4 +7,13 @@ router.post("/events", EventControllers.addEvent);
 
 router.get("/events", EventControllers.getAllEvents);
 
+router.get("/events/:id", EventControllers.getSpecificEventByID);
+
+router.post("/events/:id/participants", EventControllers.addParticipant);
+
+router.delete(
+  "/events/:id/participants/:participantId",
+  EventControllers.removeParticipant
+);
+
 export const EventRoutes = router;

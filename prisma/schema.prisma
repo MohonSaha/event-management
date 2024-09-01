@@ -1,5 +1,4 @@
 
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,17 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Event {
-  id           Int    @id @default(autoincrement())
+  eventID      Int    @id @default(autoincrement()) // Primary key with capital "ID"
   eventName    String
   eventDate    DateTime
   startTime    String
   endTime      String
   location     String
   description  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   participants ParticipantOnEvent[]
 
@@ -27,25 +25,25 @@ model Event {
 }
 
 model Participant {
-  id        Int    @id @default(autoincrement())
-  email     String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  participantID Int    @id @default(autoincrement()) // Primary key with capital "ID"
+  email         String @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  events    ParticipantOnEvent[]
+  events        ParticipantOnEvent[]
 
   @@map("participants")
 }
 
 model ParticipantOnEvent {
-  eventId       Int
-  participantId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  eventID       Int
+  participantID Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  event         Event       @relation(fields: [eventId], references: [id])
-  participant   Participant @relation(fields: [participantId], references: [id])
+  event         Event       @relation(fields: [eventID], references: [eventID])
+  participant   Participant @relation(fields: [participantID], references: [participantID])
 
   @@map("participantOnEvent")
-  @@id([eventId, participantId]) // Composite primary key
+  @@id([eventID, participantID]) // Composite primary key
 }

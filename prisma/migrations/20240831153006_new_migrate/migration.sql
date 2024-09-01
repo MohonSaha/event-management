@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE `events` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `eventID` INTEGER NOT NULL AUTO_INCREMENT,
     `eventName` VARCHAR(191) NOT NULL,
     `eventDate` DATETIME(3) NOT NULL,
     `startTime` VARCHAR(191) NOT NULL,
@@ -10,32 +10,32 @@ CREATE TABLE `events` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`eventID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `participants` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `participantID` INTEGER NOT NULL AUTO_INCREMENT,
     `email` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `participants_email_key`(`email`),
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`participantID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `participantOnEvent` (
-    `eventId` INTEGER NOT NULL,
-    `participantId` INTEGER NOT NULL,
+    `eventID` INTEGER NOT NULL,
+    `participantID` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
-    PRIMARY KEY (`eventId`, `participantId`)
+    PRIMARY KEY (`eventID`, `participantID`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `participantOnEvent` ADD CONSTRAINT `participantOnEvent_eventId_fkey` FOREIGN KEY (`eventId`) REFERENCES `events`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `participantOnEvent` ADD CONSTRAINT `participantOnEvent_eventID_fkey` FOREIGN KEY (`eventID`) REFERENCES `events`(`eventID`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `participantOnEvent` ADD CONSTRAINT `participantOnEvent_participantId_fkey` FOREIGN KEY (`participantId`) REFERENCES `participants`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `participantOnEvent` ADD CONSTRAINT `participantOnEvent_participantID_fkey` FOREIGN KEY (`participantID`) REFERENCES `participants`(`participantID`) ON DELETE RESTRICT ON UPDATE CASCADE;
