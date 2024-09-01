@@ -3,8 +3,14 @@ import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import ApiError from "../../errors/ApiError";
 import httpStatus from "http-status";
+import { checkTimeConflict } from "./event.utils";
 
 const addeventIntoDB = async (payload: any) => {
+  const { location, eventDate, startTime, endTime } = payload;
+
+  // Check for time conflicts before creating the event
+  await checkTimeConflict(location, eventDate, startTime, endTime);
+
   const createdPostData = await prisma.event.create({
     data: payload,
   });
