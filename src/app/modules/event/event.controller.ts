@@ -42,6 +42,18 @@ const getSpecificEventByID = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteEvent = catchAsync(async (req: Request, res: Response) => {
+  const eventID = parseInt(req.params.id);
+  const result = await EventServices.deleteEventByID(eventID);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Event deleted successfully!",
+    data: null,
+  });
+});
+
 const addParticipant = catchAsync(async (req: Request, res: Response) => {
   // console.log(req.body);
   const eventID = parseInt(req.params.id);
@@ -78,6 +90,7 @@ export const EventControllers = {
   addEvent,
   getAllEvents,
   getSpecificEventByID,
+  deleteEvent,
   addParticipant,
   removeParticipant,
 };

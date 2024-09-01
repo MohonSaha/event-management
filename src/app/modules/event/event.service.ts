@@ -60,6 +60,40 @@ const getSpecificEventFromDB = async (id: string) => {
   return result;
 };
 
+const deleteEventByID = async (eventID: number) => {
+  // Check if the given eventId is valid or not
+  const event = await prisma.event.findUnique({
+    where: {
+      eventID,
+    },
+  });
+
+  if (!event) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      `Event ID ${eventID} not found! Try again with a valid event ID.`
+    );
+  }
+
+  return await prisma.$transaction(async (prisma) => {
+    // First, delete all participants associated with the event
+    await prisma.participantOnEvent.deleteMany({
+      where: {
+        eventID,
+      },
+    });
+
+    // Then, delete the event itself
+    const deletedEvent = await prisma.event.delete({
+      where: {
+        eventID,
+      },
+    });
+
+    return deletedEvent;
+  });
+};
+
 const addParticipantOnEvent = async (payload: any, eventID: number) => {
   const { participantID: participantIDs } = payload;
 
@@ -154,6 +188,7 @@ export const EventServices = {
   addeventIntoDB,
   getAllEventsFromDB,
   getSpecificEventFromDB,
+  deleteEventByID,
   addParticipantOnEvent,
   removeParticipantFromEvent,
 };

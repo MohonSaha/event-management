@@ -9,6 +9,8 @@ router.get("/events", EventControllers.getAllEvents);
 
 router.get("/events/:id", EventControllers.getSpecificEventByID);
 
+router.delete("/events/:id", EventControllers.deleteEvent);
+
 router.post("/events/:id/participants", EventControllers.addParticipant);
 
 router.delete(
