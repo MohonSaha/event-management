@@ -3,7 +3,11 @@ import { paginationHelper } from "../../../helpers/paginationHelper";
 import { IPaginationOptions } from "../../interfaces/pagination";
 import ApiError from "../../errors/ApiError";
 import httpStatus from "http-status";
-import { checkTimeConflict } from "./event.utils";
+import {
+  checkTimeConflict,
+  checkTimeConflictForUpdate,
+  validateEventExists,
+} from "./event.utils";
 
 const addeventIntoDB = async (payload: any) => {
   const { location, eventDate, startTime, endTime } = payload;
@@ -49,8 +53,8 @@ const getAllEventsFromDB = async (options: IPaginationOptions) => {
   };
 };
 
-const getSpecificEventFromDB = async (id: string) => {
-  const eventID = parseInt(id);
+const getSpecificEventFromDB = async (eventID: number) => {
+  // const eventID = parseInt(id);
   const result = await prisma.event.findUniqueOrThrow({
     where: {
       eventID,
@@ -60,20 +64,47 @@ const getSpecificEventFromDB = async (id: string) => {
   return result;
 };
 
-const deleteEventByID = async (eventID: number) => {
-  // Check if the given eventId is valid or not
-  const event = await prisma.event.findUnique({
+const updateEventIntoDB = async (eventID: number, payload: any) => {
+  // Validate event existence
+  await validateEventExists(eventID);
+
+  const { location, eventDate, startTime, endTime } = payload;
+
+  // Ensure correct data types
+  if (
+    typeof eventDate === "string" &&
+    typeof startTime === "string" &&
+    typeof endTime === "string"
+  ) {
+    const eventDateObj = new Date(eventDate);
+
+    await checkTimeConflictForUpdate(
+      eventID,
+      location,
+      eventDateObj,
+      startTime,
+      endTime
+    );
+  } else {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Invalid payload format. Ensure eventDate, startTime, and endTime are strings."
+    );
+  }
+
+  const updateEventData = await prisma.event.update({
     where: {
       eventID,
     },
+    data: payload,
   });
 
-  if (!event) {
-    throw new ApiError(
-      httpStatus.NOT_FOUND,
-      `Event ID ${eventID} not found! Try again with a valid event ID.`
-    );
-  }
+  return updateEventData;
+};
+
+const deleteEventByID = async (eventID: number) => {
+  // Validate event existence
+  await validateEventExists(eventID);
 
   return await prisma.$transaction(async (prisma) => {
     // First, delete all participants associated with the event
@@ -97,19 +128,8 @@ const deleteEventByID = async (eventID: number) => {
 const addParticipantOnEvent = async (payload: any, eventID: number) => {
   const { participantID: participantIDs } = payload;
 
-  // Check if the given eventId is valid or not
-  const event = await prisma.event.findUnique({
-    where: {
-      eventID,
-    },
-  });
-
-  if (!event) {
-    throw new ApiError(
-      httpStatus.NOT_FOUND,
-      `Event ID ${eventID} not found! Try again with a valid event ID.`
-    );
-  }
+  /// Validate event existence
+  await validateEventExists(eventID);
 
   // Validate each participant ID
   for (let id of participantIDs) {
@@ -146,19 +166,8 @@ const removeParticipantFromEvent = async (
   eventID: number,
   participantID: number
 ) => {
-  // check if the given eventId is valid or not
-  const event = await prisma.event.findUnique({
-    where: {
-      eventID,
-    },
-  });
-
-  if (!event) {
-    throw new ApiError(
-      httpStatus.NOT_FOUND,
-      `Event ID ${eventID} not found! Try again with valid event ID.`
-    );
-  }
+  // Validate event existence
+  await validateEventExists(eventID);
 
   // check if the given participantId is valid or not
   const participant = await prisma.participant.findUnique({
@@ -188,6 +197,7 @@ export const EventServices = {
   addeventIntoDB,
   getAllEventsFromDB,
   getSpecificEventFromDB,
+  updateEventIntoDB,
   deleteEventByID,
   addParticipantOnEvent,
   removeParticipantFromEvent,

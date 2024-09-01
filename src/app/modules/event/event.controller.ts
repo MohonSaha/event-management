@@ -32,12 +32,24 @@ const getAllEvents = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getSpecificEventByID = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const result = await EventServices.getSpecificEventFromDB(id);
+  const eventID = parseInt(req.params.id);
+  const result = await EventServices.getSpecificEventFromDB(eventID);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Single event details retrieved successfully!",
+    data: result,
+  });
+});
+
+const updateEvent = catchAsync(async (req: Request, res: Response) => {
+  const eventID = parseInt(req.params.id);
+  const payload = req.body;
+  const result = await EventServices.updateEventIntoDB(eventID, payload);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Event updated successfully!",
     data: result,
   });
 });
@@ -90,6 +102,7 @@ export const EventControllers = {
   addEvent,
   getAllEvents,
   getSpecificEventByID,
+  updateEvent,
   deleteEvent,
   addParticipant,
   removeParticipant,
