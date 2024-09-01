@@ -6,6 +6,8 @@ import httpStatus from "http-status";
 import {
   checkTimeConflict,
   checkTimeConflictForUpdate,
+  convertTo12HourFormat,
+  convertTo24HourFormat,
   validateEventExists,
 } from "./event.utils";
 
@@ -14,6 +16,9 @@ const addeventIntoDB = async (payload: any) => {
 
   // Check for time conflicts before creating the event
   await checkTimeConflict(location, eventDate, startTime, endTime);
+
+  payload.startTime = convertTo24HourFormat(startTime);
+  payload.endTime = convertTo24HourFormat(endTime);
 
   const createdPostData = await prisma.event.create({
     data: payload,
@@ -81,7 +86,7 @@ const updateEventIntoDB = async (eventID: number, payload: any) => {
     await checkTimeConflictForUpdate(
       eventID,
       location,
-      eventDateObj,
+      eventDate,
       startTime,
       endTime
     );

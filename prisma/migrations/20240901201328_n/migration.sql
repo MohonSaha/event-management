@@ -2,7 +2,7 @@
 CREATE TABLE `events` (
     `eventID` INTEGER NOT NULL AUTO_INCREMENT,
     `eventName` VARCHAR(191) NOT NULL,
-    `eventDate` DATETIME(3) NOT NULL,
+    `eventDate` VARCHAR(191) NOT NULL,
     `startTime` VARCHAR(191) NOT NULL,
     `endTime` VARCHAR(191) NOT NULL,
     `location` VARCHAR(191) NOT NULL,

@@ -11,7 +11,7 @@ datasource db {
 model Event {
   eventID      Int    @id @default(autoincrement()) // Primary key with capital "ID"
   eventName    String
-  eventDate    DateTime
+  eventDate    String
   startTime    String
   endTime      String
   location     String

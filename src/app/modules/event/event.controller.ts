@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 import pick from "../../../shared/pick";
 
 const addEvent = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   const result = await EventServices.addeventIntoDB(req.body);
 
