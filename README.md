@@ -6,6 +6,8 @@ The Event Management API is a RESTful service designed to facilitate the creatio
 
 You can access the live version of the application [here](https://event-management-api-gilt.vercel.app/).
 
+You can access my postman api documantation [here](https://documenter.getpostman.com/view/27435661/2sAXjM5CLz).
+
 ## Features
 
 1. **Event Creation:**
