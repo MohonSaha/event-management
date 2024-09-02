@@ -1,29 +1,68 @@
-# Blood Donation Service
+# Event Management API
 
-Welcome to the Blood Donation Service! This application facilitates blood donation by connecting donors with those in need. Users can register, log in, search for donors, request blood donations, update donation statuses, and manage their profiles.
+The Event Management API is a RESTful service designed to facilitate the creation, management, and organization of events. Users can create, update, delete, and retrieve events, each associated with details such as name, date, time, location, and participants. The API ensures data integrity with features like time conflict prevention, secure data handling, and efficient management of large datasets. Additionally, it offers pagination and filtering to streamline the navigation and management of extensive event data.
 
 ## Live URL
 
-You can access the live version of the application [here](https://blood-donation-server-flax.vercel.app/).
+You can access the live version of the application [here](https://event-management-api-gilt.vercel.app/).
 
 ## Features
 
-1. **User Registration:** Users can register and create profiles, including details like name, email, blood type, location, and more.
-2. **User Login:** Registered users can log in securely to access their accounts.
-3. **Find Donors:** Users can search for donors based on various criteria such as blood type, location, name, and email.
-4. **Request Blood Donation:** Users can make requests for blood donations, providing details such as contact information, date of donation, hospital name, and reason.
-5. **Manage Donation Requests:** Donors can view and manage donation requests directed to them, including updating the status of requests.
-6. **View User Profile:** Users can view their own profiles, including details like name, email, blood type, location, and donation history.
-7. **Update User Profile:** Authenticated users can update their profile information, including bio, age, and other details.
-8. **Pagination and Filtering:** The application supports pagination and filtering of donor lists for easier navigation and search.
+1. **Event Creation:**
+
+   - Users can create new events by providing details such as event name, date, start time, end time, location, and description.
+   - The API ensures that each event is unique and properly structured.
+
+2. **Event Listing:**
+
+   - Users can retrieve a list of all events stored in the database.
+   - The API supports pagination, making it easy to navigate through large datasets of events.
+
+3. **Event Details:**
+
+   - Users can fetch the details of a specific event by its ID.
+   - This includes all relevant information like the event name, date, time, location, description, and the list of participants.
+
+4. **Event Updating:**
+
+   - Users can update existing events by specifying the event ID and providing the new details.
+   - This feature allows for changes to event attributes such as name, time, location, and participant list.
+
+5. **Event Deletion:**
+
+   - Users can delete an event by its ID.
+   - The API ensures that all associated data, such as participants, is handled correctly during the deletion process.
+
+6. **Add Participants:**
+
+   - Users can add participants to an event by providing a list of participant emails.
+   - The API manages the relationship between events and participants, ensuring proper data integrity.
+
+7. **Remove Participants:**
+
+   - Users can remove a specific participant from an event by specifying the event ID and participant ID.
+   - This feature allows for precise management of participant lists.
+
+8. **Time Conflict Prevention:**
+
+   - The API includes a feature to prevent scheduling conflicts.
+   - If an event is already scheduled at a specific location and time, the API will reject new events that overlap, ensuring no two events can occur simultaneously at the same location.
+
+9. **Efficient Data Handling:**
+
+   - The API is optimized for handling large datasets, including extensive lists of participants.
+   - This includes the implementation of efficient querying and data management techniques to ensure fast and reliable performance.
+
+10. **Pagination and Filtering:**
+    - To handle large amounts of event data, the API supports pagination and filtering.
+    - This allows users to retrieve and navigate through events efficiently, which is especially useful when dealing with a large number of events or participants.
 
 ## Technology Stack
 
 - **Programming Language:** TypeScript
 - **Web Framework:** Express.js
-- **Object Relational Mapping (ORM):** Prisma for PostgreSQL
-- **Authentication:** JWT (JSON Web Tokens)
-- **Other Dependencies:** bcrypt, cookie-parser, cors, dotenv, http-status, jsonwebtoken, zod
+- **Object Relational Mapping (ORM):** Prisma for MySQL
+- **Other Dependencies:** cookie-parser, cors, dotenv, http-status,
 
 # Setup Instructions
 
@@ -61,6 +100,11 @@ JWT_SECRET="your_secret_key"
 PORT=3000
 
 ```
+
+## Run the server locally
+
+1. Run the development server using `npm run dev`.
+2. Access the application locally at `http://localhost:PORT`, where `PORT` is the specified port in your environment variables.
 
 ## Event Management API Documentation
 

@@ -31,7 +31,9 @@ const getAllEventsFromDB = async (options: IPaginationOptions) => {
     paginationHelper.calculatePagination(options);
 
   const events = await prisma.event.findMany({
-    // include: {},
+    include: {
+      participants: true,
+    },
     skip,
     take: limit,
     orderBy:
@@ -64,7 +66,9 @@ const getSpecificEventFromDB = async (eventID: number) => {
     where: {
       eventID,
     },
-    include: {},
+    include: {
+      participants: true,
+    },
   });
   return result;
 };
